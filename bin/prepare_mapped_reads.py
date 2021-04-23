@@ -6,7 +6,7 @@ import os
 import sys
 
 from taiyaki import alphabet, bio, fast5utils, helpers
-from taiyaki.cmdargs import FileExists, Maybe
+from taiyaki.cmdargs import FileExists, Maybe, DeviceAction
 from taiyaki.common_cmdargs import add_common_command_args
 from taiyaki.iterators import imap_mp
 from taiyaki.prepare_mapping_funcs import (
@@ -45,6 +45,11 @@ def get_parser():
         'significantly improve I/O performance and use less ' +
         'disk space. An entire batch must be loaded into memory in order ' +
         'access any read potentailly increasing RAM requirements.')
+    parser.add_argument(
+        '--device', default='cpu', action=DeviceAction,
+        help='Integer specifying which GPU to use, or "cpu" to use CPU only. '
+        'Other accepted formats: "cuda" (use default GPU), "cuda:2" '
+        'or "cuda2" (use GPU 2).')
 
     parser.add_argument(
         'input_per_read_params', action=FileExists,
@@ -109,6 +114,7 @@ def main():
     kwargs['alphabet_info'] = alphabet_info
     kwargs['max_read_length'] = args.max_read_length
     kwargs['localpen'] = args.localpen
+    kwargs['device'] = args.device
 
     def iter_jobs():
         """Iterate over jobs.
