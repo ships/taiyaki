@@ -9,7 +9,7 @@ import numpy as np
 import torch
 
 from taiyaki import alphabet
-from taiyaki.activation import tanh
+from taiyaki.activation import (tanh, swish)
 from taiyaki.cmdargs import FileExists
 from taiyaki.common_cmdargs import add_common_command_args
 from taiyaki.flipflopfings import nbase_flipflop
@@ -26,6 +26,10 @@ COMPATIBLE_LAYERS = set((
     'GlobalNormTwoState',
     'GlobalNormTwoStateCatMod'))
 
+CONVOLUTION_FUN_KEYMAP = OrderedDict([
+    ('tanh', tanh),
+    ('swish', swish),
+    ])
 
 parser = argparse.ArgumentParser(
     description='Convert JSON representation of model to pytorch checkpoint ' +
@@ -125,7 +129,7 @@ def set_params(layer, jsn_params, layer_type):
 def parse_sublayer(sublayer):
     # TODO apply additional attributes (e.g. has_bias, convolutional padding)
     if sublayer['type'] == 'convolution':
-        if sublayer['activation'] != 'tanh':
+        if sublayer['activation'] not in CONVOLUTION_FUN_KEYMAP:
             sys.stderr.write((
                 'Incompatible convolutional layer activation fucntion ' +
                 '({}) encountered.\n').format(sublayer['type']))
@@ -137,7 +141,7 @@ def parse_sublayer(sublayer):
                 sublayer['stride']))
         layer = Convolution(
             sublayer['insize'], sublayer['size'], sublayer['winlen'],
-            stride=sublayer['stride'], fun=tanh)
+            stride=sublayer['stride'], fun=CONVOLUTION_FUN_KEYMAP[sublayer['activation']])
     elif sublayer['type'] == 'LSTM':
         sys.stderr.write((
             'Loading LSTM layer with attributes:\n\tin size: {}\n' +
