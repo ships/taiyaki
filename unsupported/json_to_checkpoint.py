@@ -136,9 +136,9 @@ def parse_sublayer(sublayer):
             sys.exit(1)
         sys.stderr.write((
             'Loading convolutional layer with attributes:\n\tin size: {}\n' +
-            '\tout size: {}\n\twinlen: {}\n\tstride: {}\n').format(
+            '\tout size: {}\n\twinlen: {}\n\tstride: {}\n\activation: {}\n').format(
                 sublayer['insize'], sublayer['size'], sublayer['winlen'],
-                sublayer['stride']))
+                sublayer['stride'], sublayer['activation']))
         layer = Convolution(
             sublayer['insize'], sublayer['size'], sublayer['winlen'],
             stride=sublayer['stride'], fun=CONVOLUTION_FUN_KEYMAP[sublayer['activation']])

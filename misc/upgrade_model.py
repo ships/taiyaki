@@ -78,10 +78,14 @@ def convert_1_to_2(model):
         if isinstance(layer, layers.GlobalNormFlipFlop):
             print('Adding activation (tanh) and scale (5.0) to ' +
                   'GlobalNormFlipFlop')
-            assert not hasattr(layer, 'activation'), 'Inconsistent model!'
-            layer.activation = activation.tanh
-            assert not hasattr(layer, 'scale'), 'Inconsistent model!'
-            layer.scale = 5.0
+            #  Don't assert since field has defaults and
+            #  models loaded from JSON may have it
+            if not hasattr(layer, 'activation'):
+                layer.activation = activation.tanh
+            #  Don't assert since field has defaults and
+            #  models loaded from JSON may have it
+            if not hasattr(layer, 'scale'):
+                layer.scale = 5.0
     return True
 
 
