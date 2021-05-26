@@ -80,6 +80,9 @@ DEVICE := cpu
 #Network size for training
 NETWORK_SIZE := 17
 
+#Extra training configuration
+EXTRA_TRAIN_ARGS := --overwrite
+
 #Batch size of training
 BATCH_SIZE := 7
 
@@ -313,7 +316,8 @@ ${RESULT_DIR}/train_%/trained: ${INGREDIENT_DIR}/mapped_%.hdf5
 	${TAIYAKIACTIVATE} ${TAIYAKI_ROOT}/bin/train_flipflop.py --min_sub_batch_size ${BATCH_SIZE} \
 		--chunk_len_min ${CHUNK_LEN_MIN} --chunk_len_max ${CHUNK_LEN_MAX} \
 		--sample_nreads_before_filtering 1000 \
-		--size ${NETWORK_SIZE} --outdir $(dir $@) --overwrite \
+		${EXTRA_TRAIN_ARGS} \
+		--size ${NETWORK_SIZE} --outdir $(dir $@) \
 		--niteration ${MAX_TRAINING_ITERS} --warmup_batches ${WARMUP_ITERS} \
 		--device ${DEVICE} ${SEEDOPT} ${TRAININGMODEL} $<
 	touch $@
@@ -337,7 +341,8 @@ ${RESULT_DIR}/mod_train_%/trained: ${INGREDIENT_DIR}/mod_mapped_%.hdf5
 	${TAIYAKIACTIVATE} ${TAIYAKI_ROOT}/bin/train_flipflop.py --min_sub_batch_size ${BATCH_SIZE} \
 		--chunk_len_min ${CHUNK_LEN_MIN} --chunk_len_max ${CHUNK_LEN_MAX} \
 		--sample_nreads_before_filtering 1000 \
-		--size ${NETWORK_SIZE} --overwrite \
+		${EXTRA_TRAIN_ARGS} \
+		--size ${NETWORK_SIZE} \
 		--niteration ${MAX_TRAINING_ITERS} --warmup_batches ${WARMUP_ITERS} \
 		--device ${DEVICE} ${SEEDOPT} --outdir $(dir $@) ${MODTRAININGMODEL} $<
 	touch $@
